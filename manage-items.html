@@ -1,41 +1,184 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>BONO | إدارة المنيو</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet"><style>/* نفس التصميم السابق مع إضافات بسيطة */ body{background:#0a0a0a;color:#f0efe7;font-family:'Inter',sans-serif;direction:rtl}.app{max-width:600px;margin:0 auto;background:#0f0f0f;min-height:100vh;padding-bottom:70px}.admin-section{background:#111;border-radius:28px;margin:20px;padding:16px}.section-header{display:flex;justify-content:space-between;margin-bottom:16px}.add-btn{background:#f5b642;border:none;padding:8px 16px;border-radius:40px;font-weight:bold;cursor:pointer}.admin-card{background:#1c1c1c;border-radius:20px;padding:12px;margin-bottom:12px;display:flex;justify-content:space-between}.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);justify-content:center;align-items:center;z-index:1000}.modal-content{background:#151515;width:90%;max-width:500px;border-radius:32px;padding:24px}.modal-content input,select{width:100%;margin-bottom:12px;padding:12px;background:#242424;border:1px solid #3d3d3d;border-radius:28px;color:white}.modal-actions{display:flex;gap:12px;justify-content:end}.save-btn{background:#f5b642}.cancel-btn{background:#2c2c2c}</style></head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BONO | لوحة التحكم - إدارة المنيو</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: #0a0a0a; color: #fff; direction: rtl; }
+    .app { max-width: 600px; margin: 0 auto; background: #0f0f0f; min-height: 100vh; padding-bottom: 75px; }
+    .main-header { position: sticky; top: 0; background: rgba(10,10,10,0.95); backdrop-filter: blur(12px); display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid #2a2a2a; }
+    .logo { font-size: 1.4rem; font-weight: 700; background: linear-gradient(135deg, #f5b642, #ffdd99); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .logout-btn { background: #2c2c2c; border: none; padding: 6px 12px; border-radius: 30px; cursor: pointer; color: #f5b642; }
+    .admin-dashboard { padding: 20px 16px; }
+    .admin-section { background: #111; border-radius: 28px; padding: 20px 16px; margin-bottom: 32px; border: 1px solid #2c2c2c; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+    .section-header h2 { font-size: 1.5rem; font-weight: 700; color: #f5b642; }
+    .add-new-btn { background: #f5b642; border: none; padding: 8px 18px; border-radius: 40px; font-weight: bold; cursor: pointer; color: #0a0a0a; }
+    .admin-grid { display: flex; flex-direction: column; gap: 12px; }
+    .admin-card { background: #1c1c1c; border-radius: 20px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #2a2a2a; }
+    .card-info { flex: 1; }
+    .card-info h3 { font-size: 1rem; }
+    .card-info p { font-size: 0.75rem; color: #aaa; }
+    .card-actions button { background: #2c2c2c; border: none; padding: 6px 14px; border-radius: 30px; margin-right: 8px; cursor: pointer; }
+    .card-actions button.edit-btn { background: #3a3a3a; color: #f5b642; }
+    .card-actions button.delete-btn { background: #3a1e1e; color: #ff8a5c; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 1000; }
+    .modal-card { background: #151515; max-width: 500px; width: 90%; border-radius: 32px; padding: 24px; border: 1px solid #f5b64233; }
+    .modal-card h3 { margin-bottom: 20px; }
+    .modal-card input, .modal-card select, .modal-card textarea { width: 100%; margin-bottom: 16px; padding: 12px; background: #242424; border: 1px solid #3d3d3d; border-radius: 28px; color: white; font-family: inherit; }
+    .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 10px; }
+    .modal-actions button { padding: 10px 20px; border-radius: 40px; border: none; cursor: pointer; font-weight: bold; }
+    .save-modal-btn { background: #f5b642; color: #0a0a0a; }
+    .cancel-modal-btn { background: #2c2c2c; color: white; }
+    .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 600px; background: #111; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #2a2a2a; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #aaa; text-decoration: none; font-size: 0.7rem; }
+    .nav-item.active { color: #f5b642; font-weight: bold; }
+    .nav-icon { font-size: 1.4rem; }
+  </style>
+</head>
 <body>
-<div class="app">
-  <header class="main-header" style="display:flex;justify-content:space-between;padding:16px"><div class="logo">لوحة التحكم</div><button id="logoutBtn" style="background:#2c2c2c;border:none;padding:6px 12px;border-radius:30px;color:#f5b642">تسجيل خروج</button></header>
-  <div id="adminContent" style="display:none">
-    <div class="admin-section"><div class="section-header"><h2>📂 الفئات</h2><button id="addCategoryBtn" class="add-btn">+ إضافة فئة</button></div><div id="categoriesList"></div></div>
-    <div class="admin-section"><div class="section-header"><h2>🍔 الأصناف</h2><button id="addItemBtn" class="add-btn">+ إضافة صنف</button></div><div id="itemsList"></div></div>
+<div class="app" id="app">
+  <header class="main-header">
+    <div class="logo">⚙️ لوحة التحكم</div>
+    <button id="logoutBtn" class="logout-btn">تسجيل خروج</button>
+  </header>
+  <div id="adminContent" style="display: none;">
+    <div class="admin-dashboard">
+      <div class="admin-section"><div class="section-header"><h2>📂 الفئات</h2><button id="addCategoryBtn" class="add-new-btn">+ إضافة فئة</button></div><div id="categoriesList" class="admin-grid"></div></div>
+      <div class="admin-section"><div class="section-header"><h2>🍔 الأصناف</h2><button id="addItemBtn" class="add-new-btn">+ إضافة صنف</button></div><div id="itemsList" class="admin-grid"></div></div>
+    </div>
   </div>
-  <div id="loginPanel" style="text-align:center;padding:40px"><h2>تسجيل الدخول للمدير</h2><input type="email" id="loginEmail" placeholder="البريد الإلكتروني" style="width:80%;padding:12px;margin:10px"><input type="password" id="loginPassword" placeholder="كلمة المرور" style="width:80%;padding:12px;margin:10px"><button id="doLoginBtn" style="background:#f5b642;border:none;padding:10px 30px;border-radius:40px">دخول</button></div>
-  <nav class="bottom-nav"><a href="index.html" class="nav-item">🍽️ المنيو</a><a href="cart.html" class="nav-item">🛒 السلة</a><a href="manage-items.html" class="nav-item active">⚙️ إدارة</a><a href="backgrounds.html" class="nav-item">🎨 خلفيات</a></nav>
+  <div id="loginPanel" style="text-align:center; padding: 50px 20px;">
+    <h2>تسجيل دخول المدير</h2>
+    <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" style="width:90%; margin:10px 0; padding:12px; border-radius:40px; background:#1c1c1c; border:1px solid #f5b642; color:white;">
+    <input type="password" id="loginPassword" placeholder="كلمة المرور" style="width:90%; margin:10px 0; padding:12px; border-radius:40px; background:#1c1c1c; border:1px solid #f5b642; color:white;">
+    <button id="loginBtn" style="background:#f5b642; border:none; padding:10px 30px; border-radius:40px; font-weight:bold;">دخول</button>
+  </div>
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item"><span class="nav-icon">🍽️</span><span>المنيو</span></a>
+    <a href="cart.html" class="nav-item"><span class="nav-icon">🛒</span><span>السلة</span></a>
+    <a href="manage-items.html" class="nav-item active"><span class="nav-icon">⚙️</span><span>إدارة</span></a>
+    <a href="backgrounds.html" class="nav-item"><span class="nav-icon">🎨</span><span>خلفيات</span></a>
+  </nav>
 </div>
-<div id="modal" class="modal"><div class="modal-content"><h3 id="modalTitle"></h3><div id="modalBody"></div><div class="modal-actions"><button id="modalSave" class="save-btn">حفظ</button><button id="modalCancel" class="cancel-btn">إلغاء</button></div></div></div>
+<div id="dynamicToast" style="position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#f5b642; color:#000; padding:8px 20px; border-radius:60px; z-index:999; opacity:0; transition:0.2s;"></div>
 <script type="module">
-  import { auth, signInWithEmailAndPassword, onAuthStateChanged } from './firebase-init.js';
-  import { getAllCategories, addCategory, updateCategory, deleteCategory, getAllMenuItems, addMenuItem, updateMenuItem, deleteMenuItem, uploadImageToCloudinary, showToast } from './common.js';
-  let currentUser = null;
+  import { signInAdmin, signOutAdmin, onAdminStateChanged, isAdminMode, getAllCategories, getAllMenuItems, addCategory, updateCategory, deleteCategory, addMenuItem, updateMenuItem, deleteMenuItem, uploadImageToCloudinary, getDefaultItemImage } from './common.js';
+  
+  let currentAdmin = null;
   let modalType = null, editingId = null;
+  let categories = [], menuItems = [];
 
-  function showAdminPanel() { document.getElementById('adminContent').style.display = 'block'; document.getElementById('loginPanel').style.display = 'none'; renderCategories(); renderItems(); }
-  function showLoginPanel() { document.getElementById('adminContent').style.display = 'none'; document.getElementById('loginPanel').style.display = 'block'; }
+  function showToast(msg) {
+    const t = document.getElementById('dynamicToast');
+    t.innerText = msg; t.style.opacity = '1';
+    setTimeout(() => t.style.opacity = '0', 2000);
+  }
 
-  onAuthStateChanged(auth, (user) => { if(user) { currentUser = user; showAdminPanel(); } else { currentUser = null; showLoginPanel(); } });
-  document.getElementById('doLoginBtn').onclick = async () => { const email=document.getElementById('loginEmail').value, pwd=document.getElementById('loginPassword').value; try{ await signInWithEmailAndPassword(auth, email, pwd); } catch(e){ alert('بيانات غير صحيحة'); } };
-  document.getElementById('logoutBtn').onclick = () => auth.signOut();
-
-  async function renderCategories() { const cats = await getAllCategories(); const container = document.getElementById('categoriesList'); if(!cats.length){ container.innerHTML='<div class="empty">لا توجد فئات</div>'; return; } container.innerHTML = cats.map(c => `<div class="admin-card"><div><strong>${c.nameAr}</strong></div><div><button class="editCat" data-id="${c.id}" data-name="${c.nameAr}">✏️</button> <button class="delCat" data-id="${c.id}">🗑️</button></div></div>`).join(''); document.querySelectorAll('.editCat').forEach(btn => btn.onclick = () => openCategoryModal('edit', btn.dataset.id, btn.dataset.name)); document.querySelectorAll('.delCat').forEach(btn => btn.onclick = async () => { if(confirm('حذف الفئة سيحذف كل أصنافها')){ await deleteCategory(btn.dataset.id); renderCategories(); renderItems(); showToast('تم الحذف'); } }); }
-  async function renderItems() { const items = await getAllMenuItems(); const cats = await getAllCategories(); const container = document.getElementById('itemsList'); if(!items.length){ container.innerHTML='<div class="empty">لا توجد أصناف</div>'; return; } container.innerHTML = items.map(i => `<div class="admin-card"><div><strong>${i.nameAr}</strong> - ${i.price} ج.م - ${cats.find(c=>c.id===i.categoryId)?.nameAr||''}<br><small>${i.imageUrl ? '🖼️ صورة' : 'بدون صورة'}</small></div><div><button class="editItem" data-id="${i.id}">✏️</button> <button class="delItem" data-id="${i.id}">🗑️</button></div></div>`).join(''); document.querySelectorAll('.editItem').forEach(btn => btn.onclick = () => openItemModal('edit', btn.dataset.id)); document.querySelectorAll('.delItem').forEach(btn => btn.onclick = async () => { if(confirm('حذف الصنف؟')){ await deleteMenuItem(btn.dataset.id); renderItems(); showToast('تم الحذف'); } }); }
-
-  function openCategoryModal(action, id=null, name='') { modalType='category'; editingId=id; document.getElementById('modalTitle').innerText = action==='edit'?'تعديل فئة':'إضافة فئة'; document.getElementById('modalBody').innerHTML = `<input id="catName" placeholder="اسم الفئة" value="${name}">`; document.getElementById('modal').style.display='flex'; }
-  function openItemModal(action, id=null) { modalType='item'; editingId=id; (async()=>{ const cats = await getAllCategories(); let selected='', name='', desc='', price=''; if(action==='edit' && id){ const items = await getAllMenuItems(); const it = items.find(i=>i.id===id); if(it){ name=it.nameAr; desc=it.descAr||''; price=it.price; selected=it.categoryId; } } const catOptions = cats.map(c=>`<option value="${c.id}" ${selected===c.id?'selected':''}>${c.nameAr}</option>`).join(''); document.getElementById('modalBody').innerHTML = `<input id="itemName" placeholder="الاسم" value="${name}"><input id="itemDesc" placeholder="الوصف" value="${desc}"><input id="itemPrice" type="number" placeholder="السعر" value="${price}"><select id="itemCat">${catOptions}</select><input type="file" id="itemImage" accept="image/*"><div id="imgPreview"></div>`; document.getElementById('modal').style.display='flex'; })(); }
-
-  document.getElementById('modalSave').onclick = async () => { if(modalType==='category'){ const name = document.getElementById('catName').value.trim(); if(!name) return alert('أدخل اسم الفئة'); if(editingId) await updateCategory(editingId, name); else await addCategory({nameAr:name}); closeModal(); renderCategories(); showToast('تم حفظ الفئة'); } else if(modalType==='item'){ const name = document.getElementById('itemName').value.trim(); const desc = document.getElementById('itemDesc').value.trim(); const price = parseFloat(document.getElementById('itemPrice').value); const catId = document.getElementById('itemCat').value; const file = document.getElementById('itemImage').files[0]; if(!name || isNaN(price)) return alert('الاسم والسعر مطلوبان'); let imageUrl = null; if(file) imageUrl = await uploadImageToCloudinary(file); else if(editingId){ const items = await getAllMenuItems(); const old = items.find(i=>i.id===editingId); if(old) imageUrl = old.imageUrl; } if(editingId) await updateMenuItem(editingId, {nameAr:name, descAr:desc, price, categoryId:catId, imageUrl}); else await addMenuItem({nameAr:name, descAr:desc, price, categoryId:catId, imageUrl}); closeModal(); renderItems(); showToast('تم حفظ الصنف'); } };
-  function closeModal() { document.getElementById('modal').style.display='none'; modalType=null; editingId=null; }
-  document.getElementById('modalCancel').onclick = closeModal;
+  async function renderCategories() {
+    categories = await getAllCategories();
+    const container = document.getElementById('categoriesList');
+    if (!categories.length) { container.innerHTML = '<div class="empty-message">لا توجد فئات</div>'; return; }
+    container.innerHTML = '';
+    for (let cat of categories) {
+      const div = document.createElement('div'); div.className = 'admin-card';
+      div.innerHTML = `<div class="card-info"><h3>${cat.nameAr}</h3><p>ID: ${cat.id}</p></div>
+        <div class="card-actions"><button class="edit-cat" data-id="${cat.id}" data-name="${cat.nameAr}">✏️ تعديل</button><button class="delete-cat" data-id="${cat.id}">🗑️ حذف</button></div>`;
+      container.appendChild(div);
+    }
+    document.querySelectorAll('.edit-cat').forEach(btn => { btn.onclick = () => openCategoryModal('edit', btn.getAttribute('data-id'), btn.getAttribute('data-name')); });
+    document.querySelectorAll('.delete-cat').forEach(btn => { btn.onclick = async () => { if(confirm('حذف الفئة سيحذف كل أصنافها. استمر؟')) { await deleteCategory(btn.getAttribute('data-id')); await renderCategories(); await renderItems(); showToast('تم الحذف'); } }; });
+  }
+  async function renderItems() {
+    menuItems = await getAllMenuItems();
+    const container = document.getElementById('itemsList');
+    if (!menuItems.length) { container.innerHTML = '<div class="empty-message">لا توجد أصناف</div>'; return; }
+    container.innerHTML = '';
+    for (let item of menuItems) {
+      const catName = categories.find(c => c.id === item.categoryId)?.nameAr || 'بدون فئة';
+      const div = document.createElement('div'); div.className = 'admin-card';
+      div.innerHTML = `<div class="card-info"><h3>${item.nameAr}</h3><p>${item.price} ج.م | ${catName}</p></div>
+        <div class="card-actions"><button class="edit-item" data-id="${item.id}">✏️ تعديل</button><button class="delete-item" data-id="${item.id}">🗑️ حذف</button></div>`;
+      container.appendChild(div);
+    }
+    document.querySelectorAll('.edit-item').forEach(btn => { btn.onclick = () => openItemModal('edit', btn.getAttribute('data-id')); });
+    document.querySelectorAll('.delete-item').forEach(btn => { btn.onclick = async () => { if(confirm('حذف الصنف؟')) { await deleteMenuItem(btn.getAttribute('data-id')); await renderItems(); showToast('تم الحذف'); } }; });
+  }
+  function openCategoryModal(action, id=null, name='') {
+    modalType = 'category'; editingId = id;
+    document.getElementById('modalTitle').innerText = action === 'edit' ? 'تعديل فئة' : 'إضافة فئة';
+    document.getElementById('modalBody').innerHTML = `<input type="text" id="catName" placeholder="اسم الفئة" value="${name}">`;
+    document.getElementById('genericModal').style.display = 'flex';
+  }
+  function openItemModal(action, id=null) {
+    modalType = 'item'; editingId = id;
+    let item = null;
+    if (action === 'edit' && id) item = menuItems.find(i => i.id === id);
+    const catOptions = categories.map(c => `<option value="${c.id}" ${item && item.categoryId === c.id ? 'selected' : ''}>${c.nameAr}</option>`).join('');
+    document.getElementById('modalTitle').innerText = action === 'edit' ? 'تعديل صنف' : 'إضافة صنف';
+    document.getElementById('modalBody').innerHTML = `
+      <input type="text" id="itemName" placeholder="اسم الصنف" value="${item?.nameAr || ''}">
+      <input type="text" id="itemDesc" placeholder="وصف قصير" value="${item?.descAr || ''}">
+      <input type="number" id="itemPrice" placeholder="السعر" value="${item?.price || ''}">
+      <select id="itemCategory">${catOptions}</select>
+      <label>صورة الصنف</label>
+      <input type="file" id="itemImage" accept="image/*">
+      ${item?.imageUrl ? `<div><img src="${item.imageUrl}" width="60"><br><small>الصورة الحالية</small></div>` : ''}
+    `;
+    document.getElementById('genericModal').style.display = 'flex';
+  }
+  async function saveModal() {
+    if (modalType === 'category') {
+      const name = document.getElementById('catName').value.trim();
+      if (!name) return alert('أدخل اسم الفئة');
+      if (editingId) { await updateCategory(editingId, name); showToast('تم التعديل'); }
+      else { await addCategory({ nameAr: name }); showToast('تم الإضافة'); }
+      closeModal(); await renderCategories(); await renderItems();
+    } else if (modalType === 'item') {
+      const name = document.getElementById('itemName').value.trim();
+      const desc = document.getElementById('itemDesc').value.trim();
+      const price = parseFloat(document.getElementById('itemPrice').value);
+      const categoryId = document.getElementById('itemCategory').value;
+      const imageFile = document.getElementById('itemImage').files[0];
+      if (!name || isNaN(price)) return alert('الاسم والسعر مطلوبان');
+      let imageUrl = null;
+      if (imageFile) { try { imageUrl = await uploadImageToCloudinary(imageFile); } catch(e) { alert('فشل رفع الصورة'); return; } }
+      else if (editingId) { const old = menuItems.find(i => i.id === editingId); if (old) imageUrl = old.imageUrl; }
+      if (editingId) { await updateMenuItem(editingId, { nameAr: name, descAr: desc, price, categoryId, imageUrl }); showToast('تم التعديل'); }
+      else { await addMenuItem({ nameAr: name, descAr: desc, price, categoryId, imageUrl }); showToast('تم الإضافة'); }
+      closeModal(); await renderItems();
+    }
+  }
+  function closeModal() { document.getElementById('genericModal').style.display = 'none'; }
+  function showAdminPanel(show) {
+    document.getElementById('adminContent').style.display = show ? 'block' : 'none';
+    document.getElementById('loginPanel').style.display = show ? 'none' : 'block';
+    if (show) { renderCategories(); renderItems(); }
+  }
+  onAdminStateChanged(async (user) => {
+    if (user && user.uid === "N5eoY38WByPKKBFeXBiEjW54TZg1") {
+      currentAdmin = user; showAdminPanel(true);
+    } else { currentAdmin = null; showAdminPanel(false); }
+  });
+  document.getElementById('loginBtn').onclick = async () => {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    try { await signInAdmin(email, password); showToast('تم تسجيل الدخول'); }
+    catch(e) { alert('فشل تسجيل الدخول'); }
+  };
+  document.getElementById('logoutBtn').onclick = async () => { await signOutAdmin(); showToast('تم تسجيل الخروج'); };
   document.getElementById('addCategoryBtn').onclick = () => openCategoryModal('add');
   document.getElementById('addItemBtn').onclick = () => openItemModal('add');
+  document.getElementById('modalSaveBtn').onclick = saveModal;
+  document.getElementById('modalCancelBtn').onclick = closeModal;
+  // إضافة المودال في نهاية body
+  const modalDiv = document.createElement('div'); modalDiv.id = 'genericModal'; modalDiv.className = 'modal';
+  modalDiv.innerHTML = `<div class="modal-card"><h3 id="modalTitle"></h3><div id="modalBody"></div><div class="modal-actions"><button id="modalSaveBtn" class="save-modal-btn">حفظ</button><button id="modalCancelBtn" class="cancel-modal-btn">إلغاء</button></div></div>`;
+  document.body.appendChild(modalDiv);
+  window.closeModal = closeModal;
+  window.onclick = (e) => { if (e.target === modalDiv) closeModal(); };
 </script>
 </body>
 </html>

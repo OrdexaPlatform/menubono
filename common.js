@@ -200,3 +200,39 @@ window.showToast = function(msg) {
   toast.style.opacity = '1';
   setTimeout(() => toast.style.opacity = '0', 2000);
 };
+// دوال إدارة الفئات
+function getAllCategories() {
+  return JSON.parse(localStorage.getItem('bono_categories')) || [];
+}
+
+function saveCategories(categories) {
+  localStorage.setItem('bono_categories', JSON.stringify(categories));
+}
+
+// دالة لحذف صنف (موجودة بالفعل لكن نؤكد)
+function deleteMenuItem(id) {
+  let items = getAllMenuItems();
+  items = items.filter(i => i.id !== id);
+  saveMenuItems(items);
+}
+
+// دالة تعديل صنف (موجودة)
+function updateMenuItem(id, updatedData) {
+  let items = getAllMenuItems();
+  const index = items.findIndex(i => i.id === id);
+  if (index !== -1) {
+    items[index] = { ...items[index], ...updatedData };
+    saveMenuItems(items);
+  }
+}
+
+// دالة قراءة الملف (إذا لم تكن موجودة)
+function readFileAsBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+  }
+

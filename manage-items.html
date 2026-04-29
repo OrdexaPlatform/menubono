@@ -3,102 +3,342 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>بافلو بونو | إدارة المنيو</title>
+  <title>BONO | لوحة إدارة الأصناف</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* تحسينات إضافية خاصة بصفحة الإدارة */
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .admin-controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .search-input {
+      background: #1c1c1c;
+      border: 1px solid #2a2a2a;
+      padding: 10px 16px;
+      border-radius: 50px;
+      color: white;
+      width: 200px;
+    }
+    .filter-select {
+      background: #1c1c1c;
+      border: 1px solid #2a2a2a;
+      padding: 10px 16px;
+      border-radius: 50px;
+      color: white;
+    }
+    .admin-stats {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+    }
+    .items-table {
+      background: var(--bg-card);
+      border-radius: 24px;
+      overflow-x: auto;
+    }
+    .items-table table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+    }
+    .items-table th, .items-table td {
+      padding: 16px 12px;
+      text-align: right;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+    .items-table th {
+      background: #0f0f0f;
+      color: var(--gold);
+      font-weight: 600;
+    }
+    .item-thumb {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+    .item-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .edit-icon, .delete-icon {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+    .edit-icon { color: var(--gold); }
+    .delete-icon { color: #ff7b5c; }
+    .edit-icon:hover, .delete-icon:hover {
+      background: #2a2a2a;
+    }
+    .add-new-btn {
+      background: var(--gold);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 60px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    /* المودال */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+    }
+    .modal-content {
+      background: var(--bg-card);
+      max-width: 500px;
+      width: 90%;
+      padding: 24px;
+      border-radius: 32px;
+      border: 1px solid var(--gold);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .modal-header h3 {
+      font-size: 1.4rem;
+    }
+    .close-modal {
+      font-size: 28px;
+      cursor: pointer;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      background: #1c1c1c;
+      border: 1px solid #2a2a2a;
+      border-radius: 20px;
+      color: white;
+    }
+    .image-preview {
+      margin-top: 8px;
+      max-width: 100px;
+    }
+    .save-btn {
+      background: var(--gold);
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .empty-row {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+    }
+  </style>
 </head>
 <body>
-  <div class="app-container">
+  <div class="app">
+    <header class="main-header">
+      <div class="logo">
+        <span class="logo-icon">⚙️</span>
+        <span class="logo-text">إدارة المنيو</span>
+      </div>
+      <div class="header-actions">
+        <button id="backToMenuBtn" class="icon-btn">← العودة</button>
+      </div>
+    </header>
+
+    <main style="padding: 20px;">
+      <div class="admin-header">
+        <button id="openAddModalBtn" class="add-new-btn">➕ إضافة صنف جديد</button>
+        <div class="admin-controls">
+          <input type="text" id="searchInput" class="search-input" placeholder="🔍 بحث بالاسم...">
+          <select id="categoryFilter" class="filter-select">
+            <option value="all">جميع الفئات</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="admin-stats">
+        <span>📦 إجمالي الأصناف: <strong id="totalItemsCount">0</strong></span>
+        <span>🖼️ مع صور: <strong id="itemsWithImagesCount">0</strong></span>
+      </div>
+
+      <div class="items-table">
+        <table id="itemsTable">
+          <thead>
+            <tr><th>الصورة</th><th>الاسم</th><th>الوصف</th><th>السعر</th><th>الفئة</th><th>العمليات</th></tr>
+          </thead>
+          <tbody id="itemsTableBody">
+            <tr><td colspan="6" class="empty-row">جاري التحميل...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
     <nav class="bottom-nav">
-      <a href="index.html">🍔 المنيو</a>
-      <a href="cart.html">🛒 السلة</a>
-      <a href="manage-items.html" class="active">⚙️ إدارة الأصناف</a>
-      <a href="backgrounds.html">🖼️ الخلفيات</a>
+      <a href="index.html" class="nav-item">🍽️ المنيو</a>
+      <a href="cart.html" class="nav-item">🛒 السلة</a>
+      <a href="manage-items.html" class="nav-item active">⚙️ إدارة</a>
+      <a href="backgrounds.html" class="nav-item">🎨 خلفيات</a>
     </nav>
 
-    <div class="manage-page">
-      <h2>📦 إدارة الأصناف</h2>
-      <button id="addNewItemBtn" class="add-btn">➕ إضافة صنف جديد</button>
-
-      <div id="itemsList" class="items-admin-list"></div>
-    </div>
-
-    <!-- نموذج إضافة / تعديل (يظهر كـ Modal) -->
+    <!-- مودال إضافة/تعديل -->
     <div id="itemModal" class="modal">
       <div class="modal-content">
-        <span class="close-modal">&times;</span>
-        <h3 id="modalTitle">إضافة صنف</h3>
-        <input type="text" id="itemNameAr" placeholder="الاسم (عربي)">
-        <input type="text" id="itemDescAr" placeholder="الوصف (عربي)">
-        <input type="number" id="itemPrice" placeholder="السعر">
-        <select id="itemCategory">
-          <option value="beef">لحوم</option>
-          <option value="chicken">دجاج</option>
-          <option value="fries">مقليات</option>
-          <option value="sauces">صوصات</option>
-          <option value="combos">وجبات كاملة</option>
-        </select>
-        <label>صورة الصنف:</label>
-        <input type="file" id="itemImage" accept="image/*">
-        <div id="currentImagePreview" style="margin: 10px 0;"></div>
-        <button id="saveItemBtn" class="save-btn">💾 حفظ</button>
+        <div class="modal-header">
+          <h3 id="modalTitle">إضافة صنف جديد</h3>
+          <span class="close-modal">&times;</span>
+        </div>
+        <div class="form-group">
+          <label>الاسم (عربي)</label>
+          <input type="text" id="itemNameAr" placeholder="مثال: برجر كلاسيك">
+        </div>
+        <div class="form-group">
+          <label>الوصف (عربي)</label>
+          <textarea id="itemDescAr" rows="2" placeholder="وصف مختصر"></textarea>
+        </div>
+        <div class="form-group">
+          <label>السعر (ج.م)</label>
+          <input type="number" id="itemPrice" placeholder="مثال: 45">
+        </div>
+        <div class="form-group">
+          <label>الفئة</label>
+          <select id="itemCategory"></select>
+        </div>
+        <div class="form-group">
+          <label>صورة الصنف</label>
+          <input type="file" id="itemImage" accept="image/*">
+          <div id="imagePreview" class="image-preview"></div>
+        </div>
+        <button id="saveItemBtn" class="save-btn">💾 حفظ البيانات</button>
       </div>
     </div>
   </div>
+
   <script src="common.js"></script>
   <script>
     let editingId = null;
+    let currentFilterCategory = 'all';
+    let searchKeyword = '';
 
-    function renderAdminList() {
-      const items = getAllMenuItems();
-      const container = document.getElementById('itemsList');
+    // تحميل الفئات في المودال وفي الفلتر
+    function loadCategoriesIntoSelects() {
+      const categories = getAllCategories();
+      const categorySelect = document.getElementById('itemCategory');
+      const filterSelect = document.getElementById('categoryFilter');
+      if (!categorySelect) return;
+      categorySelect.innerHTML = categories.map(c => `<option value="${c.id}">${c.nameAr}</option>`).join('');
+      filterSelect.innerHTML = '<option value="all">جميع الفئات</option>' + categories.map(c => `<option value="${c.id}">${c.nameAr}</option>`).join('');
+    }
+
+    // عرض الأصناف في الجدول مع الفلترة
+    function renderItemsTable() {
+      let items = getAllMenuItems();
+      const categories = getAllCategories();
+      const getCategoryName = (catId) => {
+        const cat = categories.find(c => c.id === catId);
+        return cat ? cat.nameAr : catId;
+      };
+
+      // فلترة حسب الفئة
+      if (currentFilterCategory !== 'all') {
+        items = items.filter(item => item.categoryId === currentFilterCategory);
+      }
+      // فلترة حسب البحث
+      if (searchKeyword.trim() !== '') {
+        const kw = searchKeyword.trim().toLowerCase();
+        items = items.filter(item => item.nameAr.toLowerCase().includes(kw));
+      }
+
+      // إحصائيات
+      document.getElementById('totalItemsCount').innerText = items.length;
+      const withImages = items.filter(i => i.imageSrc && i.imageSrc.trim() !== '').length;
+      document.getElementById('itemsWithImagesCount').innerText = withImages;
+
+      const tbody = document.getElementById('itemsTableBody');
       if (!items.length) {
-        container.innerHTML = '<div class="empty-state">لا توجد أصناف، أضف أول صنف</div>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-row">🚫 لا توجد أصناف تطابق المعايير</td></tr>';
         return;
       }
-      container.innerHTML = items.map(item => `
-        <div class="admin-item-card" data-id="${item.id}">
-          <div class="admin-img">
-            <img src="${item.imageSrc || getDefaultItemImage()}" width="60" height="60" style="object-fit:cover; border-radius:12px;">
-          </div>
-          <div class="admin-info">
-            <strong>${item.nameAr}</strong>
-            <span>${item.price} ج.م</span>
-            <small>${item.categoryId}</small>
-          </div>
-          <div class="admin-actions">
-            <button class="edit-item" data-id="${item.id}">✏️ تعديل</button>
-            <button class="delete-item" data-id="${item.id}">🗑️ حذف</button>
-          </div>
-        </div>
+
+      tbody.innerHTML = items.map(item => `
+        <tr data-id="${item.id}">
+          <td><img src="${item.imageSrc || getDefaultItemImage()}" class="item-thumb" onerror="this.src='${getDefaultItemImage()}'"></td>
+          <td><strong>${item.nameAr}</strong></td>
+          <td><small>${item.descAr || '—'}</small></td>
+          <td>${item.price} ج.م</td>
+          <td>${getCategoryName(item.categoryId)}</td>
+          <td class="item-actions">
+            <button class="edit-icon" data-id="${item.id}">✏️</button>
+            <button class="delete-icon" data-id="${item.id}">🗑️</button>
+          </td>
+        </tr>
       `).join('');
 
-      // أحداث التحرير والحذف
-      document.querySelectorAll('.edit-item').forEach(btn => {
+      // إضافة أحداث التعديل والحذف
+      document.querySelectorAll('.edit-icon').forEach(btn => {
         btn.onclick = () => openEditModal(btn.getAttribute('data-id'));
       });
-      document.querySelectorAll('.delete-item').forEach(btn => {
-        btn.onclick = () => {
-          if (confirm('هل أنت متأكد من حذف هذا الصنف؟')) {
+      document.querySelectorAll('.delete-icon').forEach(btn => {
+        btn.onclick = async () => {
+          if (confirm('⚠️ هل أنت متأكد من حذف هذا الصنف؟')) {
             deleteMenuItem(btn.getAttribute('data-id'));
-            renderAdminList();
+            renderItemsTable();  // إعادة تحميل الجدول
+            showToast('تم الحذف بنجاح');
           }
         };
       });
     }
 
+    // فتح مودال التعديل
     function openEditModal(id) {
       editingId = id;
       const items = getAllMenuItems();
       const item = items.find(i => i.id === id);
       if (!item) return;
-      document.getElementById('modalTitle').innerText = 'تعديل صنف';
+      document.getElementById('modalTitle').innerText = 'تعديل الصنف';
       document.getElementById('itemNameAr').value = item.nameAr;
-      document.getElementById('itemDescAr').value = item.descAr;
+      document.getElementById('itemDescAr').value = item.descAr || '';
       document.getElementById('itemPrice').value = item.price;
       document.getElementById('itemCategory').value = item.categoryId;
-      const previewDiv = document.getElementById('currentImagePreview');
+      // عرض الصورة الحالية
+      const previewDiv = document.getElementById('imagePreview');
       if (item.imageSrc) {
-        previewDiv.innerHTML = `<img src="${item.imageSrc}" width="80"><br><small>الصورة الحالية</small>`;
+        previewDiv.innerHTML = `<img src="${item.imageSrc}" width="80" style="border-radius: 12px;"><br><small>الصورة الحالية</small>`;
       } else {
         previewDiv.innerHTML = '';
       }
@@ -111,10 +351,14 @@
       document.getElementById('itemNameAr').value = '';
       document.getElementById('itemDescAr').value = '';
       document.getElementById('itemPrice').value = '';
-      document.getElementById('itemCategory').value = 'beef';
-      document.getElementById('currentImagePreview').innerHTML = '';
+      document.getElementById('itemCategory').value = getAllCategories()[0]?.id || 'beef';
+      document.getElementById('imagePreview').innerHTML = '';
       document.getElementById('itemImage').value = '';
       document.getElementById('itemModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('itemModal').style.display = 'none';
     }
 
     async function saveCurrentItem() {
@@ -126,7 +370,7 @@
       let imageSrc = null;
 
       if (!nameAr || isNaN(price) || price <= 0) {
-        alert('الاسم والسعر مطلوبان بصورة صحيحة');
+        alert('❌ الرجاء إدخال اسم صحيح وسعر أكبر من صفر');
         return;
       }
 
@@ -139,15 +383,13 @@
 
       if (editingId) {
         updateMenuItem(editingId, { nameAr, descAr, price, categoryId, imageSrc });
+        showToast('تم التعديل بنجاح');
       } else {
         addNewMenuItem({ nameAr, descAr, price, categoryId, imageSrc });
+        showToast('تمت الإضافة بنجاح');
       }
       closeModal();
-      renderAdminList();
-    }
-
-    function closeModal() {
-      document.getElementById('itemModal').style.display = 'none';
+      renderItemsTable();
     }
 
     function readFileAsBase64(file) {
@@ -158,12 +400,25 @@
       });
     }
 
-    initData();
-    renderAdminList();
+    // أحداث البحث والفلتر
+    document.getElementById('searchInput')?.addEventListener('input', (e) => {
+      searchKeyword = e.target.value;
+      renderItemsTable();
+    });
+    document.getElementById('categoryFilter')?.addEventListener('change', (e) => {
+      currentFilterCategory = e.target.value;
+      renderItemsTable();
+    });
 
-    document.getElementById('addNewItemBtn').onclick = openAddModal;
+    // تهيئة الصفحة
+    initData();
+    loadCategoriesIntoSelects();
+    renderItemsTable();
+
+    document.getElementById('openAddModalBtn').onclick = openAddModal;
     document.querySelector('.close-modal').onclick = closeModal;
     document.getElementById('saveItemBtn').onclick = saveCurrentItem;
+    document.getElementById('backToMenuBtn').onclick = () => window.location.href = 'index.html';
     window.onclick = (e) => { if (e.target === document.getElementById('itemModal')) closeModal(); };
   </script>
 </body>

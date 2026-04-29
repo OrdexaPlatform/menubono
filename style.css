@@ -1,0 +1,239 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #0a0a0a;
+  color: #f0efe7;
+  direction: rtl;
+}
+
+.app-container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: #111;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* الشريط السفلي للتنقل */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: 600px;
+  background: #1e1e1e;
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 0;
+  border-top: 1px solid #2c2c2c;
+  backdrop-filter: blur(10px);
+  z-index: 100;
+}
+.bottom-nav a {
+  color: #bbb;
+  text-decoration: none;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.bottom-nav a.active {
+  color: #f9b23f;
+  font-weight: bold;
+}
+
+/* الهيدر */
+.hero {
+  background: linear-gradient(145deg, #1e1a10, #0f0b05);
+  padding: 2rem;
+  text-align: center;
+  background-size: cover;
+  background-position: center;
+}
+.hero h1 {
+  font-size: 2rem;
+  background: linear-gradient(135deg, #f9b23f, #ffd966);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* تبويبات الفئات */
+.category-tabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 15px;
+}
+.category-tab {
+  background: #222;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 40px;
+  color: #ddd;
+  font-weight: bold;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.category-tab.active {
+  background: #f9b23f;
+  color: #111;
+}
+
+/* بطاقات المنيو */
+.menu-items-container {
+  padding: 10px;
+}
+.menu-card {
+  background: #191919;
+  border-radius: 24px;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #2c2c2c;
+}
+.card-img img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 20px;
+}
+.card-info {
+  flex: 1;
+}
+.card-info h3 {
+  font-size: 1.1rem;
+}
+.desc {
+  font-size: 0.7rem;
+  color: #bcb09b;
+}
+.price {
+  color: #f9b23f;
+  font-weight: bold;
+  margin: 6px 0;
+}
+.add-to-cart, .add-btn, .save-btn, .confirm-btn {
+  background: #f9b23f;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 50px;
+  font-weight: bold;
+  color: #111;
+  cursor: pointer;
+  transition: 0.1s;
+}
+.add-to-cart:active, .add-btn:active {
+  transform: scale(0.96);
+}
+
+/* صفحة السلة */
+.cart-page, .manage-page, .backgrounds-page {
+  padding: 20px;
+}
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  background: #1c1c1c;
+  padding: 12px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+.cart-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.cart-qty {
+  width: 60px;
+  background: #333;
+  border: 1px solid #f9b23f;
+  border-radius: 30px;
+  text-align: center;
+  color: white;
+  padding: 6px;
+}
+.remove-item {
+  background: #3a1e1e;
+  border: none;
+  border-radius: 30px;
+  padding: 5px 12px;
+  color: #ffa559;
+}
+.cart-summary {
+  background: #1a1a1a;
+  padding: 15px;
+  border-radius: 24px;
+  margin: 15px 0;
+}
+.customer-form input, .customer-form select, .customer-form textarea {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 12px;
+  background: #242424;
+  border: 1px solid #3d3d3d;
+  border-radius: 30px;
+  color: white;
+}
+
+/* إدارة الأصناف */
+.admin-item-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #1c1c1c;
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 20px;
+}
+.admin-info {
+  flex: 1;
+}
+.admin-actions button {
+  margin-right: 8px;
+  background: #2c2c2c;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+/* مودال */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+}
+.modal-content {
+  background: #1a1a1a;
+  max-width: 500px;
+  width: 90%;
+  padding: 20px;
+  border-radius: 32px;
+}
+.close-modal {
+  float: left;
+  font-size: 28px;
+  cursor: pointer;
+}
+.bg-group {
+  background: #1c1c1c;
+  padding: 15px;
+  border-radius: 24px;
+  margin-bottom: 20px;
+}
+.empty-state, .empty-cart {
+  text-align: center;
+  padding: 40px;
+  color: #aaa;
+}

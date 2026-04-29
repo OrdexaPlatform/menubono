@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بافلو بونو | إعدادات الخلفيات</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <nav class="bottom-nav">
+      <a href="index.html">🍔 المنيو</a>
+      <a href="cart.html">🛒 السلة</a>
+      <a href="manage-items.html">⚙️ إدارة الأصناف</a>
+      <a href="backgrounds.html" class="active">🖼️ الخلفيات</a>
+    </nav>
+
+    <div class="backgrounds-page">
+      <h2>🎨 تخصيص مظهر الموقع</h2>
+
+      <div class="bg-group">
+        <h3>صورة خلفية للهيدر (البنر العلوي)</h3>
+        <input type="file" id="heroImageInput" accept="image/*">
+        <div id="heroPreview"></div>
+        <button id="saveHeroBtn">حفظ الخلفية</button>
+      </div>
+
+      <div class="bg-group">
+        <h3>الصورة الافتراضية للأصناف (عند عدم وجود صورة)</h3>
+        <input type="file" id="defaultItemImgInput" accept="image/*">
+        <div id="defaultImgPreview"></div>
+        <button id="saveDefaultImgBtn">حفظ الصورة الافتراضية</button>
+      </div>
+
+      <div class="bg-group">
+        <h3>عنوان الموقع الرئيسي</h3>
+        <input type="text" id="siteTitleInput" placeholder="مثال: بافلو بونو">
+        <h3>النص الفرعي</h3>
+        <input type="text" id="siteSubtitleInput" placeholder="مثال: أشهى البرجر المشوي">
+        <button id="saveTextsBtn">حفظ النصوص</button>
+      </div>
+    </div>
+  </div>
+  <script src="common.js"></script>
+  <script>
+    function loadBackgroundSettings() {
+      const settings = getBackgroundSettings();
+      if (settings.heroImage) showPreview('heroPreview', settings.heroImage);
+      if (settings.defaultItemImage) showPreview('defaultImgPreview', settings.defaultItemImage);
+      document.getElementById('siteTitleInput').value = settings.siteTitle || '';
+      document.getElementById('siteSubtitleInput').value = settings.siteSubtitle || '';
+    }
+
+    function showPreview(divId, src) {
+      const div = document.getElementById(divId);
+      div.innerHTML = `<img src="${src}" width="150" style="border-radius:12px; margin-top:8px;">`;
+    }
+
+    async function saveHeroImage() {
+      const file = document.getElementById('heroImageInput').files[0];
+      if (file) {
+        const base64 = await readFileAsBase64(file);
+        const settings = getBackgroundSettings();
+        settings.heroImage = base64;
+        saveBackgroundSettings(settings);
+        showPreview('heroPreview', base64);
+        alert('تم حفظ خلفية الهيدر');
+      } else {
+        alert('اختر صورة أولاً');
+      }
+    }
+
+    async function saveDefaultItemImage() {
+      const file = document.getElementById('defaultItemImgInput').files[0];
+      if (file) {
+        const base64 = await readFileAsBase64(file);
+        const settings = getBackgroundSettings();
+        settings.defaultItemImage = base64;
+        saveBackgroundSettings(settings);
+        showPreview('defaultImgPreview', base64);
+        alert('تم حفظ الصورة الافتراضية للأصناف');
+      }
+    }
+
+    function saveTexts() {
+      const settings = getBackgroundSettings();
+      settings.siteTitle = document.getElementById('siteTitleInput').value;
+      settings.siteSubtitle = document.getElementById('siteSubtitleInput').value;
+      saveBackgroundSettings(settings);
+      alert('تم حفظ النصوص');
+    }
+
+    function readFileAsBase64(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    initData();
+    loadBackgroundSettings();
+    document.getElementById('saveHeroBtn').onclick = saveHeroImage;
+    document.getElementById('saveDefaultImgBtn').onclick = saveDefaultItemImage;
+    document.getElementById('saveTextsBtn').onclick = saveTexts;
+  </script>
+</body>
+</html>

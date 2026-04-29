@@ -3,169 +3,153 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BONO | لوحة إدارة الأصناف</title>
+  <title>BONO | لوحة التحكم - إدارة المنيو</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
-    /* تحسينات إضافية خاصة بصفحة الإدارة */
-    .admin-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-bottom: 24px;
+    /* تحسينات إضافية لصفحة الإدارة */
+    .admin-dashboard {
+      padding: 20px 16px;
     }
-    .admin-controls {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
+    .admin-section {
+      background: #111;
+      border-radius: 28px;
+      padding: 20px 16px;
+      margin-bottom: 32px;
+      border: 1px solid #2c2c2c;
     }
-    .search-input {
-      background: #1c1c1c;
-      border: 1px solid #2a2a2a;
-      padding: 10px 16px;
-      border-radius: 50px;
-      color: white;
-      width: 200px;
-    }
-    .filter-select {
-      background: #1c1c1c;
-      border: 1px solid #2a2a2a;
-      padding: 10px 16px;
-      border-radius: 50px;
-      color: white;
-    }
-    .admin-stats {
-      background: var(--surface);
-      border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 24px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.9rem;
-    }
-    .items-table {
-      background: var(--bg-card);
-      border-radius: 24px;
-      overflow-x: auto;
-    }
-    .items-table table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 600px;
-    }
-    .items-table th, .items-table td {
-      padding: 16px 12px;
-      text-align: right;
-      border-bottom: 1px solid var(--border-color);
-      vertical-align: middle;
-    }
-    .items-table th {
-      background: #0f0f0f;
-      color: var(--gold);
-      font-weight: 600;
-    }
-    .item-thumb {
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
-      border-radius: 12px;
-    }
-    .item-actions {
-      display: flex;
-      gap: 8px;
-    }
-    .edit-icon, .delete-icon {
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 6px;
-      border-radius: 50%;
-      transition: 0.2s;
-    }
-    .edit-icon { color: var(--gold); }
-    .delete-icon { color: #ff7b5c; }
-    .edit-icon:hover, .delete-icon:hover {
-      background: #2a2a2a;
-    }
-    .add-new-btn {
-      background: var(--gold);
-      border: none;
-      padding: 12px 24px;
-      border-radius: 60px;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    /* المودال */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
-      justify-content: center;
-      align-items: center;
-      z-index: 200;
-    }
-    .modal-content {
-      background: var(--bg-card);
-      max-width: 500px;
-      width: 90%;
-      padding: 24px;
-      border-radius: 32px;
-      border: 1px solid var(--gold);
-    }
-    .modal-header {
+    .section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
     }
-    .modal-header h3 {
-      font-size: 1.4rem;
+    .section-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #f5b642;
     }
-    .close-modal {
-      font-size: 28px;
-      cursor: pointer;
-    }
-    .form-group {
-      margin-bottom: 16px;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%;
-      padding: 12px;
-      background: #1c1c1c;
-      border: 1px solid #2a2a2a;
-      border-radius: 20px;
-      color: white;
-    }
-    .image-preview {
-      margin-top: 8px;
-      max-width: 100px;
-    }
-    .save-btn {
-      background: var(--gold);
-      width: 100%;
-      padding: 12px;
+    .add-new-btn {
+      background: #f5b642;
       border: none;
+      padding: 8px 18px;
       border-radius: 40px;
       font-weight: bold;
       cursor: pointer;
+      transition: 0.2s;
+      color: #0a0a0a;
     }
-    .empty-row {
+    .add-new-btn:hover {
+      background: #e09d32;
+      transform: scale(0.97);
+    }
+    .admin-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .admin-card {
+      background: #1c1c1c;
+      border-radius: 20px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: 0.2s;
+      border: 1px solid #2a2a2a;
+    }
+    .admin-card:hover {
+      border-color: #f5b642;
+    }
+    .card-info {
+      flex: 1;
+    }
+    .card-info h3 {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .card-info p {
+      font-size: 0.75rem;
+      color: #aaa;
+      margin-top: 4px;
+    }
+    .card-actions button {
+      background: #2c2c2c;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 30px;
+      margin-right: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: 0.1s;
+    }
+    .card-actions button.edit-btn {
+      background: #3a3a3a;
+      color: #f5b642;
+    }
+    .card-actions button.delete-btn {
+      background: #3a1e1e;
+      color: #ff8a5c;
+    }
+    .empty-message {
       text-align: center;
-      padding: 40px;
-      color: var(--text-muted);
+      padding: 30px;
+      color: #888;
+    }
+    /* نماذج التعديل والإضافة (مودال) */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-card {
+      background: #151515;
+      max-width: 500px;
+      width: 90%;
+      border-radius: 32px;
+      padding: 24px;
+      border: 1px solid #f5b64233;
+    }
+    .modal-card h3 {
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+    .modal-card input, .modal-card select, .modal-card textarea {
+      width: 100%;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: #242424;
+      border: 1px solid #3d3d3d;
+      border-radius: 28px;
+      color: white;
+      font-family: inherit;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    .modal-actions button {
+      padding: 10px 20px;
+      border-radius: 40px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .save-modal-btn {
+      background: #f5b642;
+      color: #0a0a0a;
+    }
+    .cancel-modal-btn {
+      background: #2c2c2c;
+      color: white;
     }
   </style>
 </head>
@@ -174,40 +158,48 @@
     <header class="main-header">
       <div class="logo">
         <span class="logo-icon">⚙️</span>
-        <span class="logo-text">إدارة المنيو</span>
+        <span class="logo-text">لوحة التحكم</span>
       </div>
       <div class="header-actions">
-        <button id="backToMenuBtn" class="icon-btn">← العودة</button>
+        <button id="backToMenuBtn" class="icon-btn" style="background: none; color:#f5b642;">← العودة للمنيو</button>
       </div>
     </header>
 
-    <main style="padding: 20px;">
-      <div class="admin-header">
-        <button id="openAddModalBtn" class="add-new-btn">➕ إضافة صنف جديد</button>
-        <div class="admin-controls">
-          <input type="text" id="searchInput" class="search-input" placeholder="🔍 بحث بالاسم...">
-          <select id="categoryFilter" class="filter-select">
-            <option value="all">جميع الفئات</option>
-          </select>
+    <div class="admin-dashboard">
+      <!-- قسم إدارة الفئات -->
+      <div class="admin-section">
+        <div class="section-header">
+          <h2>📂 الفئات (الأقسام)</h2>
+          <button id="addCategoryBtn" class="add-new-btn">+ إضافة فئة جديدة</button>
+        </div>
+        <div id="categoriesList" class="admin-grid">
+          <!-- سيتم عرض الفئات ديناميكياً -->
         </div>
       </div>
 
-      <div class="admin-stats">
-        <span>📦 إجمالي الأصناف: <strong id="totalItemsCount">0</strong></span>
-        <span>🖼️ مع صور: <strong id="itemsWithImagesCount">0</strong></span>
+      <!-- قسم إدارة الأصناف -->
+      <div class="admin-section">
+        <div class="section-header">
+          <h2>🍔 الأصناف (الوجبات)</h2>
+          <button id="addItemBtn" class="add-new-btn">+ إضافة صنف جديد</button>
+        </div>
+        <div id="itemsList" class="admin-grid">
+          <!-- سيتم عرض الأصناف ديناميكياً -->
+        </div>
       </div>
+    </div>
 
-      <div class="items-table">
-        <table id="itemsTable">
-          <thead>
-            <tr><th>الصورة</th><th>الاسم</th><th>الوصف</th><th>السعر</th><th>الفئة</th><th>العمليات</th></tr>
-          </thead>
-          <tbody id="itemsTableBody">
-            <tr><td colspan="6" class="empty-row">جاري التحميل...</td></tr>
-          </tbody>
-        </table>
+    <!-- مودال موحد للفئات والأصناف -->
+    <div id="genericModal" class="modal">
+      <div class="modal-card">
+        <h3 id="modalTitle">إضافة</h3>
+        <div id="modalBody"></div>
+        <div class="modal-actions">
+          <button id="modalSaveBtn" class="save-modal-btn">حفظ</button>
+          <button id="modalCancelBtn" class="cancel-modal-btn">إلغاء</button>
+        </div>
       </div>
-    </main>
+    </div>
 
     <nav class="bottom-nav">
       <a href="index.html" class="nav-item">🍽️ المنيو</a>
@@ -215,183 +207,230 @@
       <a href="manage-items.html" class="nav-item active">⚙️ إدارة</a>
       <a href="backgrounds.html" class="nav-item">🎨 خلفيات</a>
     </nav>
-
-    <!-- مودال إضافة/تعديل -->
-    <div id="itemModal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 id="modalTitle">إضافة صنف جديد</h3>
-          <span class="close-modal">&times;</span>
-        </div>
-        <div class="form-group">
-          <label>الاسم (عربي)</label>
-          <input type="text" id="itemNameAr" placeholder="مثال: برجر كلاسيك">
-        </div>
-        <div class="form-group">
-          <label>الوصف (عربي)</label>
-          <textarea id="itemDescAr" rows="2" placeholder="وصف مختصر"></textarea>
-        </div>
-        <div class="form-group">
-          <label>السعر (ج.م)</label>
-          <input type="number" id="itemPrice" placeholder="مثال: 45">
-        </div>
-        <div class="form-group">
-          <label>الفئة</label>
-          <select id="itemCategory"></select>
-        </div>
-        <div class="form-group">
-          <label>صورة الصنف</label>
-          <input type="file" id="itemImage" accept="image/*">
-          <div id="imagePreview" class="image-preview"></div>
-        </div>
-        <button id="saveItemBtn" class="save-btn">💾 حفظ البيانات</button>
-      </div>
-    </div>
   </div>
 
   <script src="common.js"></script>
   <script>
-    let editingId = null;
-    let currentFilterCategory = 'all';
-    let searchKeyword = '';
+    // متغيرات عامة لتحديد نوع العملية
+    let modalType = null; // 'category' or 'item'
+    let editingId = null; // id للفئة أو الصنف
+    let currentItemCategoryId = null; // للاستخدام عند إضافة صنف
 
-    // تحميل الفئات في المودال وفي الفلتر
-    function loadCategoriesIntoSelects() {
+    // دوال عرض الفئات
+    function renderCategories() {
       const categories = getAllCategories();
-      const categorySelect = document.getElementById('itemCategory');
-      const filterSelect = document.getElementById('categoryFilter');
-      if (!categorySelect) return;
-      categorySelect.innerHTML = categories.map(c => `<option value="${c.id}">${c.nameAr}</option>`).join('');
-      filterSelect.innerHTML = '<option value="all">جميع الفئات</option>' + categories.map(c => `<option value="${c.id}">${c.nameAr}</option>`).join('');
-    }
-
-    // عرض الأصناف في الجدول مع الفلترة
-    function renderItemsTable() {
-      let items = getAllMenuItems();
-      const categories = getAllCategories();
-      const getCategoryName = (catId) => {
-        const cat = categories.find(c => c.id === catId);
-        return cat ? cat.nameAr : catId;
-      };
-
-      // فلترة حسب الفئة
-      if (currentFilterCategory !== 'all') {
-        items = items.filter(item => item.categoryId === currentFilterCategory);
-      }
-      // فلترة حسب البحث
-      if (searchKeyword.trim() !== '') {
-        const kw = searchKeyword.trim().toLowerCase();
-        items = items.filter(item => item.nameAr.toLowerCase().includes(kw));
-      }
-
-      // إحصائيات
-      document.getElementById('totalItemsCount').innerText = items.length;
-      const withImages = items.filter(i => i.imageSrc && i.imageSrc.trim() !== '').length;
-      document.getElementById('itemsWithImagesCount').innerText = withImages;
-
-      const tbody = document.getElementById('itemsTableBody');
-      if (!items.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="empty-row">🚫 لا توجد أصناف تطابق المعايير</td></tr>';
+      const container = document.getElementById('categoriesList');
+      if (!categories.length) {
+        container.innerHTML = '<div class="empty-message">لا توجد فئات، أضف فئة أولاً</div>';
         return;
       }
-
-      tbody.innerHTML = items.map(item => `
-        <tr data-id="${item.id}">
-          <td><img src="${item.imageSrc || getDefaultItemImage()}" class="item-thumb" onerror="this.src='${getDefaultItemImage()}'"></td>
-          <td><strong>${item.nameAr}</strong></td>
-          <td><small>${item.descAr || '—'}</small></td>
-          <td>${item.price} ج.م</td>
-          <td>${getCategoryName(item.categoryId)}</td>
-          <td class="item-actions">
-            <button class="edit-icon" data-id="${item.id}">✏️</button>
-            <button class="delete-icon" data-id="${item.id}">🗑️</button>
-          </td>
-        </tr>
+      container.innerHTML = categories.map(cat => `
+        <div class="admin-card" data-id="${cat.id}">
+          <div class="card-info">
+            <h3>${cat.nameAr}</h3>
+            <p>ID: ${cat.id}</p>
+          </div>
+          <div class="card-actions">
+            <button class="edit-category-btn" data-id="${cat.id}" data-name="${cat.nameAr}">✏️ تعديل</button>
+            <button class="delete-category-btn" data-id="${cat.id}">🗑️ حذف</button>
+          </div>
+        </div>
       `).join('');
 
-      // إضافة أحداث التعديل والحذف
-      document.querySelectorAll('.edit-icon').forEach(btn => {
-        btn.onclick = () => openEditModal(btn.getAttribute('data-id'));
+      // أحداث التعديل والحذف
+      document.querySelectorAll('.edit-category-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          const name = btn.getAttribute('data-name');
+          openCategoryModal('edit', id, name);
+        });
       });
-      document.querySelectorAll('.delete-icon').forEach(btn => {
-        btn.onclick = async () => {
-          if (confirm('⚠️ هل أنت متأكد من حذف هذا الصنف؟')) {
-            deleteMenuItem(btn.getAttribute('data-id'));
-            renderItemsTable();  // إعادة تحميل الجدول
-            showToast('تم الحذف بنجاح');
+      document.querySelectorAll('.delete-category-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          if (confirm('⚠️ هل أنت متأكد من حذف هذه الفئة؟ سيتم حذف جميع الأصناف المرتبطة بها.')) {
+            deleteCategoryAndItsItems(id);
+            renderCategories();
+            renderItems();
+            showToast('تم حذف الفئة وما يرتبط بها');
           }
-        };
+        });
       });
     }
 
-    // فتح مودال التعديل
-    function openEditModal(id) {
-      editingId = id;
-      const items = getAllMenuItems();
-      const item = items.find(i => i.id === id);
-      if (!item) return;
-      document.getElementById('modalTitle').innerText = 'تعديل الصنف';
-      document.getElementById('itemNameAr').value = item.nameAr;
-      document.getElementById('itemDescAr').value = item.descAr || '';
-      document.getElementById('itemPrice').value = item.price;
-      document.getElementById('itemCategory').value = item.categoryId;
-      // عرض الصورة الحالية
-      const previewDiv = document.getElementById('imagePreview');
-      if (item.imageSrc) {
-        previewDiv.innerHTML = `<img src="${item.imageSrc}" width="80" style="border-radius: 12px;"><br><small>الصورة الحالية</small>`;
-      } else {
-        previewDiv.innerHTML = '';
-      }
-      document.getElementById('itemModal').style.display = 'flex';
+    // حذف فئة وكل الأصناف التابعة لها
+    function deleteCategoryAndItsItems(categoryId) {
+      let categories = getAllCategories();
+      categories = categories.filter(c => c.id !== categoryId);
+      saveCategories(categories);
+
+      let items = getAllMenuItems();
+      items = items.filter(item => item.categoryId !== categoryId);
+      saveMenuItems(items);
     }
 
-    function openAddModal() {
-      editingId = null;
-      document.getElementById('modalTitle').innerText = 'إضافة صنف جديد';
-      document.getElementById('itemNameAr').value = '';
-      document.getElementById('itemDescAr').value = '';
-      document.getElementById('itemPrice').value = '';
-      document.getElementById('itemCategory').value = getAllCategories()[0]?.id || 'beef';
-      document.getElementById('imagePreview').innerHTML = '';
-      document.getElementById('itemImage').value = '';
-      document.getElementById('itemModal').style.display = 'flex';
+    // عرض الأصناف
+    function renderItems() {
+      const items = getAllMenuItems();
+      const categories = getAllCategories();
+      const container = document.getElementById('itemsList');
+      if (!items.length) {
+        container.innerHTML = '<div class="empty-message">لا توجد أصناف، أضف صنفاً جديداً</div>';
+        return;
+      }
+      container.innerHTML = items.map(item => {
+        const catName = categories.find(c => c.id === item.categoryId)?.nameAr || 'بدون فئة';
+        const imgHtml = item.imageSrc ? `<img src="${item.imageSrc}" width="40" height="40" style="border-radius:12px; margin-left:10px;">` : '';
+        return `
+          <div class="admin-card" data-id="${item.id}">
+            <div class="card-info" style="display:flex; align-items:center; gap:10px;">
+              ${imgHtml}
+              <div>
+                <h3>${item.nameAr}</h3>
+                <p>${item.price} ج.م | ${catName} | ${item.descAr?.substring(0,40) || ''}</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="edit-item-btn" data-id="${item.id}">✏️ تعديل</button>
+              <button class="delete-item-btn" data-id="${item.id}">🗑️ حذف</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.edit-item-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          openItemModal('edit', id);
+        });
+      });
+      document.querySelectorAll('.delete-item-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          if (confirm('هل تريد حذف هذا الصنف نهائياً؟')) {
+            deleteMenuItem(id);
+            renderItems();
+            showToast('تم حذف الصنف');
+          }
+        });
+      });
+    }
+
+    // فتح مودال إضافة/تعديل فئة
+    function openCategoryModal(action, id = null, name = '') {
+      modalType = 'category';
+      editingId = id;
+      document.getElementById('modalTitle').innerText = action === 'edit' ? 'تعديل الفئة' : 'إضافة فئة جديدة';
+      document.getElementById('modalBody').innerHTML = `
+        <input type="text" id="catNameAr" placeholder="اسم الفئة (مثال: مشروبات)" value="${name}" required>
+      `;
+      document.getElementById('genericModal').style.display = 'flex';
+    }
+
+    // فتح مودال إضافة/تعديل صنف
+    function openItemModal(action, id = null) {
+      modalType = 'item';
+      editingId = id;
+      const categories = getAllCategories();
+      let selectedCatId = '';
+      let name = '', desc = '', price = '', imageSrc = '';
+      if (action === 'edit' && id) {
+        const item = getAllMenuItems().find(i => i.id === id);
+        if (item) {
+          name = item.nameAr;
+          desc = item.descAr || '';
+          price = item.price;
+          selectedCatId = item.categoryId;
+          imageSrc = item.imageSrc || '';
+        }
+      }
+      const categoryOptions = categories.map(cat => `<option value="${cat.id}" ${selectedCatId === cat.id ? 'selected' : ''}>${cat.nameAr}</option>`).join('');
+      document.getElementById('modalTitle').innerText = action === 'edit' ? 'تعديل الصنف' : 'إضافة صنف جديد';
+      document.getElementById('modalBody').innerHTML = `
+        <input type="text" id="itemNameAr" placeholder="اسم الصنف (عربي)" value="${name}" required>
+        <input type="text" id="itemDescAr" placeholder="وصف قصير" value="${desc}">
+        <input type="number" id="itemPrice" placeholder="السعر (ج.م)" value="${price}" required>
+        <select id="itemCategoryId">${categoryOptions || '<option>لا توجد فئات، أضف فئة أولاً</option>'}</select>
+        <label>صورة الصنف (اختياري)</label>
+        <input type="file" id="itemImageInput" accept="image/*">
+        ${imageSrc ? `<div style="margin-top:8px;"><img src="${imageSrc}" width="60"><br><small>الصورة الحالية</small></div>` : ''}
+      `;
+      document.getElementById('genericModal').style.display = 'flex';
+    }
+
+    // حفظ البيانات حسب النوع
+    async function saveModalData() {
+      if (modalType === 'category') {
+        const catNameAr = document.getElementById('catNameAr')?.value.trim();
+        if (!catNameAr) {
+          alert('الرجاء إدخال اسم الفئة');
+          return;
+        }
+        if (editingId) {
+          // تعديل فئة
+          let categories = getAllCategories();
+          const index = categories.findIndex(c => c.id === editingId);
+          if (index !== -1) {
+            categories[index].nameAr = catNameAr;
+            saveCategories(categories);
+            showToast('تم تعديل الفئة');
+          }
+        } else {
+          // إضافة فئة جديدة
+          const newId = 'cat_' + Date.now() + '_' + Math.random().toString(36);
+          const newCat = { id: newId, nameAr: catNameAr };
+          const categories = getAllCategories();
+          categories.push(newCat);
+          saveCategories(categories);
+          showToast('تم إضافة الفئة');
+        }
+        closeModal();
+        renderCategories();
+      } 
+      else if (modalType === 'item') {
+        const nameAr = document.getElementById('itemNameAr')?.value.trim();
+        const descAr = document.getElementById('itemDescAr')?.value.trim();
+        const price = parseFloat(document.getElementById('itemPrice')?.value);
+        const categoryId = document.getElementById('itemCategoryId')?.value;
+        const imageFile = document.getElementById('itemImageInput')?.files[0];
+        let imageSrc = null;
+
+        if (!nameAr || isNaN(price) || price <= 0 || !categoryId) {
+          alert('الاسم، السعر، والفئة إجبارية');
+          return;
+        }
+
+        if (imageFile) {
+          imageSrc = await readFileAsBase64(imageFile);
+        } else if (editingId) {
+          const existing = getAllMenuItems().find(i => i.id === editingId);
+          if (existing && existing.imageSrc) imageSrc = existing.imageSrc;
+        }
+
+        if (editingId) {
+          updateMenuItem(editingId, { nameAr, descAr, price, categoryId, imageSrc });
+          showToast('تم تعديل الصنف');
+        } else {
+          const newId = 'item_' + Date.now() + '_' + Math.random().toString(36);
+          const newItem = { id: newId, nameAr, descAr, price, categoryId, imageSrc };
+          const items = getAllMenuItems();
+          items.push(newItem);
+          saveMenuItems(items);
+          showToast('تم إضافة الصنف');
+        }
+        closeModal();
+        renderItems();
+      }
     }
 
     function closeModal() {
-      document.getElementById('itemModal').style.display = 'none';
+      document.getElementById('genericModal').style.display = 'none';
+      document.getElementById('modalBody').innerHTML = '';
+      modalType = null;
+      editingId = null;
     }
 
-    async function saveCurrentItem() {
-      const nameAr = document.getElementById('itemNameAr').value.trim();
-      const descAr = document.getElementById('itemDescAr').value.trim();
-      const price = parseFloat(document.getElementById('itemPrice').value);
-      const categoryId = document.getElementById('itemCategory').value;
-      const imageFile = document.getElementById('itemImage').files[0];
-      let imageSrc = null;
-
-      if (!nameAr || isNaN(price) || price <= 0) {
-        alert('❌ الرجاء إدخال اسم صحيح وسعر أكبر من صفر');
-        return;
-      }
-
-      if (imageFile) {
-        imageSrc = await readFileAsBase64(imageFile);
-      } else if (editingId) {
-        const existing = getAllMenuItems().find(i => i.id === editingId);
-        if (existing && existing.imageSrc) imageSrc = existing.imageSrc;
-      }
-
-      if (editingId) {
-        updateMenuItem(editingId, { nameAr, descAr, price, categoryId, imageSrc });
-        showToast('تم التعديل بنجاح');
-      } else {
-        addNewMenuItem({ nameAr, descAr, price, categoryId, imageSrc });
-        showToast('تمت الإضافة بنجاح');
-      }
-      closeModal();
-      renderItemsTable();
-    }
-
+    // دالة مساعدة لتحويل الملف إلى base64
     function readFileAsBase64(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -400,26 +439,25 @@
       });
     }
 
-    // أحداث البحث والفلتر
-    document.getElementById('searchInput')?.addEventListener('input', (e) => {
-      searchKeyword = e.target.value;
-      renderItemsTable();
-    });
-    document.getElementById('categoryFilter')?.addEventListener('change', (e) => {
-      currentFilterCategory = e.target.value;
-      renderItemsTable();
-    });
+    // دوال إضافية في common.js لابد من وجودها أو تعريفها هنا
+    function saveCategories(categories) {
+      localStorage.setItem('bono_categories', JSON.stringify(categories));
+    }
+    // التأكد من أن دوال getAllCategories, saveMenuItems, deleteMenuItem موجودة في common.js
+    // إذا لم تكن موجودة سنضيفها هنا، لكن common.js الأصلي يحتوي عليها.
 
     // تهيئة الصفحة
-    initData();
-    loadCategoriesIntoSelects();
-    renderItemsTable();
+    initData();  // موجود في common.js
+    renderCategories();
+    renderItems();
 
-    document.getElementById('openAddModalBtn').onclick = openAddModal;
-    document.querySelector('.close-modal').onclick = closeModal;
-    document.getElementById('saveItemBtn').onclick = saveCurrentItem;
-    document.getElementById('backToMenuBtn').onclick = () => window.location.href = 'index.html';
-    window.onclick = (e) => { if (e.target === document.getElementById('itemModal')) closeModal(); };
+    // أحداث الأزرار
+    document.getElementById('addCategoryBtn').addEventListener('click', () => openCategoryModal('add'));
+    document.getElementById('addItemBtn').addEventListener('click', () => openItemModal('add'));
+    document.getElementById('modalSaveBtn').addEventListener('click', saveModalData);
+    document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
+    document.getElementById('backToMenuBtn').addEventListener('click', () => window.location.href = 'index.html');
+    window.addEventListener('click', (e) => { if (e.target === document.getElementById('genericModal')) closeModal(); });
   </script>
 </body>
-</html>
+  </html>

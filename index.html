@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>BONO | المنيو</title>
+  <title>BONO | المنيو الرئيسي</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
     body { background: #0a0a0a; color: #fff; direction: rtl; }
@@ -12,7 +12,7 @@
     .logo { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #f5b642, #ffdd99); -webkit-background-clip: text; background-clip: text; color: transparent; }
     .cart-icon-btn { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #f5b642; position: relative; }
     .cart-badge { position: absolute; top: -6px; right: -10px; background: #f5b642; color: #0a0a0a; font-size: 0.7rem; border-radius: 50%; padding: 2px 6px; min-width: 18px; }
-    .hero-section { height: 240px; background: linear-gradient(135deg, #1f1a15, #0c0b0a); display: flex; align-items: center; justify-content: center; text-align: center; position: relative; }
+    .hero-section { height: 240px; background: linear-gradient(135deg, #1f1a15, #0c0b0a); display: flex; align-items: center; justify-content: center; text-align: center; position: relative; background-size: cover; background-position: center; }
     .hero-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
     .hero-content { position: relative; z-index: 2; padding: 20px; }
     .hero-content h1 { font-size: 2.3rem; background: linear-gradient(135deg, #f5b642, #ffdd99); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -44,7 +44,14 @@
     <div class="logo">🔥 BONO</div>
     <button id="cartBtn" class="cart-icon-btn">🛒 <span id="cartCountBadge" class="cart-badge">0</span></button>
   </header>
-  <section class="hero-section"><div class="hero-overlay"></div><div class="hero-content"><h1>بافلو بونو</h1><p style="color:#ddd;">طعم يستحق التجربة 🔥</p><button id="scrollToMenuBtn" class="hero-cta">استعرض القائمة 👇</button></div></section>
+  <section class="hero-section" id="heroSection">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 id="siteTitle">بافلو بونو</h1>
+      <p id="siteSubtitle" style="color:#ddd;">طعم يستحق التجربة 🔥</p>
+      <button id="scrollToMenuBtn" class="hero-cta">استعرض القائمة 👇</button>
+    </div>
+  </section>
   <div class="categories-wrapper"><div class="categories-scroll" id="categoryTabs"></div></div>
   <main class="menu-container" id="menuContainer"></main>
   <nav class="bottom-nav">
@@ -56,106 +63,93 @@
 </div>
 <div id="dynamicToast"></div>
 
-<script>
-  // ---------- البيانات ----------
-  const categories = [
-    { id: "beef", nameAr: "🍔 برجر لحم" },
-    { id: "chicken", nameAr: "🍗 برجر دجاج" },
-    { id: "fries", nameAr: "🍟 مقليات" }
-  ];
-  const menuItems = [
-    { id: "b1", categoryId: "beef", nameAr: "بافلو كلاسيك", descAr: "لحم بقري مشوي مع صوص بافلو", price: 45, imageUrl: "https://placehold.co/110x110?text=Burger" },
-    { id: "b2", categoryId: "beef", nameAr: "برجر تكساس", descAr: "جبنة ببر جاك، هلابينو حار", price: 55, imageUrl: "https://placehold.co/110x110?text=Texas" },
-    { id: "c1", categoryId: "chicken", nameAr: "تشيكن كرسبي", descAr: "دجاج مقرمش بصوص الثوم", price: 40, imageUrl: "https://placehold.co/110x110?text=Chicken" },
-    { id: "f1", categoryId: "fries", nameAr: "بطاطس بالجبنة", descAr: "بطاطس مقلية مع صوص جبنة", price: 25, imageUrl: "https://placehold.co/110x110?text=Fries" }
-  ];
+<script type="module">
+  import { getAllCategories, getAllMenuItems, addToCart, getCart, getBackgroundSettings, getDefaultItemImage, initData, onAdminStateChanged } from './common.js';
 
-  // السلة
-  let cart = JSON.parse(localStorage.getItem('bono_cart') || '[]');
-  function saveCart() { localStorage.setItem('bono_cart', JSON.stringify(cart)); }
+  let activeCategory = null;
+  let categories = [];
+  let menuItems = [];
+
+  async function loadData() {
+    categories = await getAllCategories();
+    menuItems = await getAllMenuItems();
+    if (categories.length > 0 && !activeCategory) activeCategory = categories[0].id;
+    render();
+  }
+
   function updateCartBadge() {
-    let total = 0;
-    for (let i = 0; i < cart.length; i++) total += cart[i].quantity;
+    const cart = getCart();
+    const total = cart.reduce((s, i) => s + i.quantity, 0);
     document.getElementById('cartCountBadge').innerText = total;
   }
-  function addToCart(id) {
-    let found = false;
-    for (let i = 0; i < cart.length; i++) {
-      if (cart[i].id === id) { cart[i].quantity++; found = true; break; }
-    }
-    if (!found) cart.push({ id: id, quantity: 1 });
-    saveCart();
-    updateCartBadge();
+
+  function showToast(msg) {
     const toast = document.getElementById('dynamicToast');
-    toast.innerText = '✓ تمت الإضافة';
+    toast.innerText = msg;
     toast.style.opacity = '1';
     setTimeout(() => toast.style.opacity = '0', 2000);
   }
 
-  let activeCategory = "beef";
-
-  function render() {
-    // عرض الفئات
+  async function render() {
     const tabsDiv = document.getElementById('categoryTabs');
     tabsDiv.innerHTML = '';
     for (let i = 0; i < categories.length; i++) {
       const cat = categories[i];
       const btn = document.createElement('button');
-      btn.className = 'category-btn' + (activeCategory === cat.id ? ' active' : '');
+      btn.className = `category-btn ${activeCategory === cat.id ? 'active' : ''}`;
       btn.textContent = cat.nameAr;
-      btn.onclick = (function(catId) { return function() { activeCategory = catId; render(); }; })(cat.id);
+      btn.onclick = (function(cid) { return function() { activeCategory = cid; render(); }; })(cat.id);
       tabsDiv.appendChild(btn);
     }
 
-    // عرض الأصناف
     const container = document.getElementById('menuContainer');
-    const filtered = [];
-    for (let i = 0; i < menuItems.length; i++) {
-      if (menuItems[i].categoryId === activeCategory) filtered.push(menuItems[i]);
-    }
+    const filtered = menuItems.filter(item => item.categoryId === activeCategory);
     if (filtered.length === 0) {
       container.innerHTML = '<div style="text-align:center;padding:40px;">لا توجد أصناف</div>';
       return;
     }
+    const defaultImg = await getDefaultItemImage();
     container.innerHTML = '';
     for (let i = 0; i < filtered.length; i++) {
       const item = filtered[i];
       const card = document.createElement('div');
       card.className = 'menu-item-card';
+      const imgSrc = item.imageUrl || defaultImg;
       card.innerHTML = `
-        <div class="card-image"><img src="${item.imageUrl}" alt="${item.nameAr}"></div>
+        <div class="card-image"><img src="${imgSrc}" alt="${item.nameAr}" onerror="this.src='${defaultImg}'"></div>
         <div class="card-details">
           <h3 class="item-title">${item.nameAr}</h3>
-          <p class="item-description">${item.descAr}</p>
+          <p class="item-description">${item.descAr || ''}</p>
           <div class="item-footer">
             <span class="item-price">${item.price} ج.م</span>
             <button class="add-btn" data-id="${item.id}">+ أضف</button>
           </div>
         </div>
       `;
+      const addBtn = card.querySelector('.add-btn');
+      addBtn.onclick = (function(id) { return function() { addToCart(id); updateCartBadge(); showToast('✓ تمت الإضافة'); }; })(item.id);
       container.appendChild(card);
-    }
-    // ربط أحداث الأزرار بعد الإضافة
-    const btns = document.querySelectorAll('.add-btn');
-    for (let i = 0; i < btns.length; i++) {
-      btns[i].onclick = function(e) {
-        e.stopPropagation();
-        const id = this.getAttribute('data-id');
-        addToCart(id);
-        this.style.transform = 'scale(0.9)';
-        setTimeout(() => { this.style.transform = ''; }, 150);
-      };
     }
   }
 
-  document.getElementById('scrollToMenuBtn').onclick = function() {
+  async function applyHeroSettings() {
+    const settings = await getBackgroundSettings();
+    const hero = document.getElementById('heroSection');
+    if (settings.heroImage) hero.style.backgroundImage = `url('${settings.heroImage}')`;
+    if (settings.siteTitle) document.getElementById('siteTitle').innerText = settings.siteTitle;
+    if (settings.siteSubtitle) document.getElementById('siteSubtitle').innerText = settings.siteSubtitle;
+  }
+
+  document.getElementById('scrollToMenuBtn').onclick = () => {
     document.querySelector('.categories-wrapper').scrollIntoView({ behavior: 'smooth' });
   };
-  document.getElementById('cartBtn').onclick = function() {
+  document.getElementById('cartBtn').onclick = () => {
     window.location.href = 'cart.html';
   };
 
-  render();
+  await initData();
+  await applyHeroSettings();
+  await loadData();
   updateCartBadge();
 </script>
 </body>
